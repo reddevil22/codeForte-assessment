@@ -6,6 +6,7 @@ interface StateContext {
     hunger: number;
     happiness: number;
     age: number;
+    attention: number;
 }
 
 export const tamagotchiMachine = createMachine({
@@ -13,10 +14,11 @@ export const tamagotchiMachine = createMachine({
     initial: "idle",
     context: {
         health: 5,
-        weight: 0,
+        weight: 5,
         hunger: 5,
-        happiness: 0,
+        happiness: 5,
         age: 0,
+        attention: 0,
     } as StateContext,
     states: {
         idle: {
@@ -33,7 +35,7 @@ export const tamagotchiMachine = createMachine({
             on: {
                 DONE: {
                     target: "idle",
-                    actions: ['changeAge', 'increaseHunger', 'changeHealth']
+                    actions: ['changeAge', 'increaseHunger', 'changeHealth', 'changeAttention']
                 },
                 IGNORE: "die"
             },
@@ -42,7 +44,7 @@ export const tamagotchiMachine = createMachine({
             on: {
                 DONE: {
                     target: "idle",
-                    actions: ['changeHappiness', 'increaseHunger']
+                    actions: ['changeHappiness', 'increaseHunger', 'decreaseWeight']
                 },
                 IGNORE: "die"
             },
@@ -51,7 +53,7 @@ export const tamagotchiMachine = createMachine({
             on: {
                 DONE: {
                     target: "idle",
-                    actions: ['changeHealth', 'changeWeight', 'decreaseHunger', 'changeHappiness']
+                    actions: ['changeHealth', 'increaseWeight', 'decreaseHunger', 'changeHappiness']
                 },
                 IGNORE: "die"
             },
@@ -66,7 +68,10 @@ export const tamagotchiMachine = createMachine({
         },
         toilet: {
             on: {
-                DONE: "idle"
+                DONE: {
+                    target: "idle",
+                    actions: ['increaseHunger']
+                }
             },
         },
         die: {},
@@ -76,8 +81,11 @@ export const tamagotchiMachine = createMachine({
         changeHealth: assign({
             health: (context) => context.health + 1,
         }),
-        changeWeight: assign({
+        increaseWeight: assign({
             weight: (context) => context.weight + 1,
+        }),
+        decreaseWeight: assign({
+            weight: (context) => context.weight - 1,
         }),
         increaseHunger: assign({
             hunger: (context) => context.hunger + 1,
@@ -90,6 +98,12 @@ export const tamagotchiMachine = createMachine({
         }),
         changeAge: assign({
             age: (context) => context.age + 1,
+        }),
+        changeAttention: assign({
+            attention: (context, event) => {
+                console.log('event', event)
+                return context.attention;
+            },
         }),
     }
 });
