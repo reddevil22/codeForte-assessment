@@ -1,1 +1,1 @@
-# codeForte-assessment
+# codeforte-assessment
