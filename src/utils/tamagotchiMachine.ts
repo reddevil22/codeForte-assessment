@@ -1,8 +1,23 @@
-import { createMachine } from "xstate";
+import { assign, createMachine } from "xstate";
+
+interface StateContext {
+    health: number;
+    weight: number;
+    hunger: number;
+    happiness: number;
+    age: number;
+}
 
 export const tamagotchiMachine = createMachine({
     id: "tamagotchi",
     initial: "idle",
+    context: {
+        health: 5,
+        weight: 0,
+        hunger: 5,
+        happiness: 0,
+        age: 0,
+    } as StateContext,
     states: {
         idle: {
             on: {
@@ -16,25 +31,37 @@ export const tamagotchiMachine = createMachine({
         },
         sleeping: {
             on: {
-                DONE: "idle",
+                DONE: {
+                    target: "idle",
+                    actions: ['changeAge', 'increaseHunger', 'changeHealth']
+                },
                 IGNORE: "die"
             },
         },
         playing: {
             on: {
-                DONE: "idle",
+                DONE: {
+                    target: "idle",
+                    actions: ['changeHappiness', 'increaseHunger']
+                },
                 IGNORE: "die"
             },
         },
         eating: {
             on: {
-                DONE: "idle",
+                DONE: {
+                    target: "idle",
+                    actions: ['changeHealth', 'changeWeight', 'decreaseHunger', 'changeHappiness']
+                },
                 IGNORE: "die"
             },
         },
         healing: {
             on: {
-                DONE: "idle"
+                DONE: {
+                    target: "idle",
+                    actions: ['changeHealth']
+                }
             },
         },
         toilet: {
@@ -43,5 +70,26 @@ export const tamagotchiMachine = createMachine({
             },
         },
         die: {},
-    },
+    }
+}, {
+    actions: {
+        changeHealth: assign({
+            health: (context) => context.health + 1,
+        }),
+        changeWeight: assign({
+            weight: (context) => context.weight + 1,
+        }),
+        increaseHunger: assign({
+            hunger: (context) => context.hunger + 1,
+        }),
+        decreaseHunger: assign({
+            hunger: (context) => context.hunger - 1,
+        }),
+        changeHappiness: assign({
+            happiness: (context) => context.happiness + 1,
+        }),
+        changeAge: assign({
+            age: (context) => context.age + 1,
+        }),
+    }
 });
