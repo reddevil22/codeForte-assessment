@@ -21,9 +21,10 @@ export const Tamagotchi = () => {
                         <button onClick={() => sendToMachine('EAT')}>Feed</button>
                         <button onClick={() => sendToMachine('HEAL')}>Heal</button>
                         <button onClick={() => sendToMachine('TOILET')}>Take to toilet</button>
-                        <button onClick={() => sendToMachine('IGNORE')}>Ignore</button>
                     </div>}
+                    {(machine.value !== 'die' && machine.value !== 'toilet') && <button onClick={() => sendToMachine('IGNORE')}>Ignore</button>}
                     {(machine.value !== 'idle' && machine.value !== 'die') && <button onClick={() => sendToMachine('DONE')}>Finish current activity</button>}
+                    {machine.value === 'die' && <button onClick={() => sendToMachine('RESET')}>Reset Tamagotchi</button>}
                 </div>
             </div>
             <div className="stats">

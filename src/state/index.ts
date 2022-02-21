@@ -77,7 +77,15 @@ export const tamagotchiMachine = createMachine({
                 }
             },
         },
-        die: {},
+        die: {
+            on: {
+                RESET: {
+                    target: "idle",
+                    actions: ['resetStats']
+                },
+                
+            }
+        },
     }
 }, {
     actions: {
@@ -102,11 +110,13 @@ export const tamagotchiMachine = createMachine({
         changeAge: assign({
             age: (context) => context.age + 1,
         }),
-        changeAttention: assign({
-            attention: (context, event) => {
-                console.log('event', event)
-                return context.attention;
-            },
-        }),
+        resetStats: assign({
+            health: (context) => context.health = 5,
+            weight: (context) => context.weight = 5,
+            hunger: (context) => context.hunger = 5,
+            happiness: (context) => context.happiness = 5,
+            age: (context) => context.age = 0,
+            attention: (context) => context.age = 0,
+        })
     }
 });
