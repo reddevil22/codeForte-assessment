@@ -1,31 +1,38 @@
 
-import { useMachine } from '@xstate/react';
-import { tamagotchiMachine } from '../utils';
+import { useContext } from 'react';
+import { MachineContext } from '../state';
+
+import '../styles/Tamagotchi.css'
 
 export const Tamagotchi = () => {
-    const [state, send] = useMachine(tamagotchiMachine);
-
-    const transition = ['sleeping', 'playing', 'eating', 'healing', 'toilet'].some(state.matches);
-    const ignoreTransition = ['sleeping', 'playing', 'eating'].some(state.matches);
+    //@ts-ignore
+    const [machine, sendToMachine] = useContext(MachineContext);
 
     return (
         <div className="tamagotchi">
             <div className="display">
-                <h4 className="state">{state.value}</h4>
-                <button onClick={() => send('SLEEP')}>Sleeping</button>
-                <button onClick={() => send('PLAY')}>Playing</button>
-                <button onClick={() => send('EAT')}>Eating</button>
-                <button onClick={() => send('HEAL')}>Healing</button>
-                <button onClick={() => send('TOILET')}>Toilet</button>
-                {ignoreTransition && <button onClick={() => send('IGNORE')}>Ignore</button>}
-                {transition && <button onClick={() => send('DONE')}>Done</button>}
+                <div className="state">
+                    <h4 className="state">Current Tamagotchi state: {machine.value}</h4>
+                </div>
+                <div className="buttons">
+                    {machine.value === 'idle' && <div className="activities">
+                        <button onClick={() => sendToMachine('SLEEP')}>Sleep</button>
+                        <button onClick={() => sendToMachine('PLAY')}>Play</button>
+                        <button onClick={() => sendToMachine('EAT')}>Feed</button>
+                        <button onClick={() => sendToMachine('HEAL')}>Heal</button>
+                        <button onClick={() => sendToMachine('TOILET')}>Take to toilet</button>
+                        <button onClick={() => sendToMachine('IGNORE')}>Ignore</button>
+                    </div>}
+                    {(machine.value !== 'idle' && machine.value !== 'die') && <button onClick={() => sendToMachine('DONE')}>Finish current activity</button>}
+                </div>
             </div>
             <div className="stats">
-                <div className="health">Health: {state.context.health}</div>
-                <div className="health">Weight: {state.context.weight}</div>
-                <div className="health">Hunger: {state.context.hunger}</div>
-                <div className="health">Happiness: {state.context.happiness}</div>
-                <div className="health">Age: {state.context.age}</div>
+                <h4 className="stats">Stats</h4>
+                <div className="health">Health: {machine.context.health}</div>
+                <div className="health">Weight: {machine.context.weight}</div>
+                <div className="health">Hunger: {machine.context.hunger}</div>
+                <div className="health">Happiness: {machine.context.happiness}</div>
+                <div className="health">Age: {machine.context.age}</div>
             </div>
         </div>
     );

@@ -1,3 +1,4 @@
+import { createContext } from "react";
 import { assign, createMachine } from "xstate";
 
 interface StateContext {
@@ -8,6 +9,8 @@ interface StateContext {
     age: number;
     attention: number;
 }
+
+export const MachineContext = createContext({});
 
 export const tamagotchiMachine = createMachine({
     id: "tamagotchi",
